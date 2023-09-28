@@ -33,3 +33,15 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Generated files
+storage/*
+!storage/images/
+!storage/.gitkeep
+
+storage/images/*
+!storage/images/products/
+!storage/images/.gitkeep
+
+storage/images/products/*
+!storage/images/products/.gitkeep
