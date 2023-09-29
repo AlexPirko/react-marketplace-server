@@ -8,11 +8,11 @@ export class Product {
   @Column({ name: 'title', type: 'varchar' })
   title: string;
 
-  @Column({ name: 'desc', type: 'varchar' })
-  desc: string;
+  @Column({ name: 'description', type: 'varchar' })
+  description: string;
 
-  @Column({ name: 'price_regular', type: 'int' })
-  priceRegular: number;
+  @Column({ name: 'price', type: 'int' })
+  price: number;
 
   @Column({ name: 'price_discounted', type: 'int' })
   priceDiscounted: string;

@@ -1,2 +1,2 @@
 export const PRODUCTS_IMAGES_FOLDER_PATH =
-  process.cwd() + '/storage/images/products/';
+  'C:/React/react-marketplace/mp-server/src' + '/storage/images/products/';
