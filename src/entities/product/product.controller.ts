@@ -15,7 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 import { ProductService } from './product.service';
 import { getMulterOptions } from '@helpers/fileUploader';
-import { PRODUCTS_IMAGES_FOLDER_PATH } from '@consts/storagePaths';
+// import { PRODUCTS_IMAGES_FOLDER_PATH } from '@consts/storagePaths';
 
 @Controller('products')
 export class ProductController {

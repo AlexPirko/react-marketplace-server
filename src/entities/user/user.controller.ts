@@ -2,66 +2,86 @@ import {
   Controller,
   Get,
   Post,
-  Req,
-  Res,
   Put,
-  // Patch,
   Delete,
   Param,
   ParseIntPipe,
   Body,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
 
+// import { compare } from 'bcrypt';
+
+import { ForbiddenException } from '@helpers/exceptions';
+// import { AuthService } from '@services/auth/auth.service';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { LoginUserDto } from './dto/loginUser.dto';
+import { RegisterUserDto } from './dto/registerUser.dto';
 
-@Controller('users')
+@Controller({ path: 'users' })
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService, // private readonly authService: AuthService,
+  ) {}
 
   @Get('/')
-  async getAllUsers(@Res() res: Response) {
+  @HttpCode(HttpStatus.OK)
+  async getAllUsers() {
     const users = await this.userService.getAllUsers();
-
-    return res.send({
-      status: 'ok',
-      data: users,
-    });
+    return { status: 'ok', data: users };
   }
 
   @Get('/:id')
-  async getUser(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    const userData = await this.userService.getUserData(id);
-
-    return res.send({
-      status: 'ok',
-      data: userData,
-    });
+  @HttpCode(HttpStatus.OK)
+  async getUser(@Param('id', ParseIntPipe) id: number) {
+    const userData = await this.userService.getUserById(id);
+    return { status: 'ok', data: userData };
   }
 
-  @Post('/')
-  async createUser(@Req() req: Request, @Res() res: Response) {
-    await this.userService.createUser(req.body);
-    return res.send({ status: 'ok' });
+  @Post('/login')
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() body: LoginUserDto) {
+    const { loginOrEmail } = body;
+
+    const foundUser = await this.userService.getUserByLoginOrEmail(
+      loginOrEmail,
+    );
+    if (!foundUser) throw new ForbiddenException();
+
+    // const isPasswordMatch = await compare(password, foundUser.password);
+    // if (!isPasswordMatch) throw new ForbiddenException();
+
+    // const jwt = await this.authService.setSession({ userId: foundUser.id });
+
+    return {
+      status: 'ok',
+      // data: { accessToken: jwt },
+    };
+  }
+
+  @Post('/register')
+  @HttpCode(HttpStatus.CREATED)
+  async register(@Body() body: RegisterUserDto) {
+    await this.userService.createUser(body);
+    return { status: 'ok', data: null };
   }
 
   @Put('/:id')
+  @HttpCode(HttpStatus.OK)
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateUserDto,
-    @Res() res: Response,
   ) {
     this.userService.updateUserData(id, body);
-    return res.send({ status: 'ok' });
+    return { status: 'ok', data: null };
   }
 
   @Delete('/:id')
-  async deleteUser(
-    @Param('id', ParseIntPipe) id: number,
-    @Res() res: Response,
-  ) {
+  @HttpCode(HttpStatus.OK)
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
     this.userService.deleteUser(id);
-    return res.send({ status: 'ok' });
+    return { status: 'ok', data: null };
   }
 }
