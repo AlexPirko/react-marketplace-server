@@ -9,9 +9,20 @@ services:
       POSTGRES_PASSWORD: nest_test
       PGDATA: /data/postgres
     volumes:
-       - postgres:/var/www/nest_test/docker-volumes/postgres
+      - postgres:/var/www/nest_test/docker-volumes/postgres
     ports:
       - 127.0.0.1:5432:5432
+    networks:
+      - nest_test
+    restart: unless-stopped
+
+  nest_test_redis:
+    container_name: nest_test_redis
+    image: redis:6
+    volumes:
+      - redis:/data
+    ports:
+      - 127.0.0.1:6379:6379
     networks:
       - nest_test
     restart: unless-stopped
@@ -24,7 +35,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: nest_test
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-       - pgadmin:/var/www/nest_test/docker-volumes/pgadmin
+      - pgadmin:/var/www/nest_test/docker-volumes/pgadmin
     ports:
       - 127.0.0.1:5050:80
     networks:
@@ -37,4 +48,5 @@ networks:
 
 volumes:
   postgres:
+  redis:
   pgadmin:

@@ -39,7 +39,7 @@ export class UserService {
   }
 
   // Register new user
-  public async createUser(userData: RegisterUserDto) {
+  async createUser(userData: RegisterUserDto) {
     const salt = await genSalt(10);
 
     const hashedPassword = await hash(userData.password, salt);
@@ -53,33 +53,33 @@ export class UserService {
   }
 
   // Get all users
-  public async getAllUsers() {
+  async getAllUsers() {
     return await this.userRepository.find({
       select: this.availableFields as any,
     });
   }
 
   // Get user data by id
-  public async getUserById(id: number) {
+  async getUserById(id: number) {
     return await this.userRepository.findOne({
       where: { id },
       select: this.availableFields as any,
     });
   }
 
-  public async getUserByLoginOrEmail(loginOrEmail: string) {
+  async getUserByLoginOrEmail(loginOrEmail: string) {
     return await this.userRepository.findOne({
       where: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
   }
 
   // Update user data whole
-  public async updateUserData(id: number, body: UpdateUserDto) {
+  async updateUserData(id: number, body: UpdateUserDto) {
     return await this.userRepository.update({ id }, this.filterFields(body));
   }
 
   // Delete user by id
-  public async deleteUser(id: number) {
+  async deleteUser(id: number) {
     return await this.userRepository.delete(id);
   }
 }

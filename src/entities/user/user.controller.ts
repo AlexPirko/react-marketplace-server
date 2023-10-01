@@ -11,19 +11,21 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
-// import { compare } from 'bcrypt';
+import { compare } from 'bcrypt';
 
 import { ForbiddenException } from '@helpers/exceptions';
-// import { AuthService } from '@services/auth/auth.service';
+
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { RegisterUserDto } from './dto/registerUser.dto';
+import { JwtService } from '@services/jwt/jwt.service';
 
 @Controller({ path: 'users' })
 export class UserController {
   constructor(
-    private readonly userService: UserService, // private readonly authService: AuthService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   @Get('/')
@@ -43,21 +45,23 @@ export class UserController {
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: LoginUserDto) {
-    const { loginOrEmail } = body;
+    const { loginOrEmail, password } = body;
 
     const foundUser = await this.userService.getUserByLoginOrEmail(
       loginOrEmail,
     );
     if (!foundUser) throw new ForbiddenException();
 
-    // const isPasswordMatch = await compare(password, foundUser.password);
-    // if (!isPasswordMatch) throw new ForbiddenException();
+    const isPasswordMatch = await compare(password as any, foundUser.password);
+    if (!isPasswordMatch) throw new ForbiddenException();
 
-    // const jwt = await this.authService.setSession({ userId: foundUser.id });
+    const jwt = await this.jwtService.setSession({
+      userId: foundUser.id,
+    });
 
     return {
       status: 'ok',
-      // data: { accessToken: jwt },
+      data: { accessToken: jwt },
     };
   }
 
